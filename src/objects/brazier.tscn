@@ -1,0 +1,98 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://src/objects/brazier.gd" id="1_brazier"]
+
+[sub_resource type="CylinderShape3D" id="shape"]
+height = 0.9
+radius = 0.4
+
+[sub_resource type="StandardMaterial3D" id="mat_iron"]
+albedo_color = Color(0.16, 0.15, 0.15, 1)
+metallic = 0.7
+roughness = 0.5
+
+[sub_resource type="CylinderMesh" id="mesh_bowl"]
+top_radius = 0.45
+bottom_radius = 0.2
+height = 0.3
+
+[sub_resource type="CylinderMesh" id="mesh_stand"]
+top_radius = 0.07
+bottom_radius = 0.18
+height = 0.65
+
+[sub_resource type="Gradient" id="soft_dot"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="soft_tex"]
+gradient = SubResource("soft_dot")
+width = 32
+height = 32
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="mat_fire"]
+transparency = 1
+shading_mode = 0
+albedo_texture = SubResource("soft_tex")
+vertex_color_use_as_albedo = true
+albedo_color = Color(1, 0.55, 0.15, 1)
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="mesh_flame"]
+material = SubResource("mat_fire")
+size = Vector2(0.28, 0.28)
+
+[sub_resource type="Curve" id="scale_curve"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="fire_gradient"]
+colors = PackedColorArray(1, 0.85, 0.4, 0.9, 1, 0.3, 0.05, 0)
+
+[node name="Brazier" type="StaticBody3D"]
+script = ExtResource("1_brazier")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.45, 0)
+shape = SubResource("shape")
+
+[node name="Stand" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.33, 0)
+cast_shadow = 0
+mesh = SubResource("mesh_stand")
+surface_material_override/0 = SubResource("mat_iron")
+
+[node name="Bowl" type="MeshInstance3D" parent="."]
+position = Vector3(0, 0.8, 0)
+cast_shadow = 0
+mesh = SubResource("mesh_bowl")
+surface_material_override/0 = SubResource("mat_iron")
+
+[node name="Flames" type="CPUParticles3D" parent="."]
+position = Vector3(0, 0.95, 0)
+amount = 48
+lifetime = 0.7
+mesh = SubResource("mesh_flame")
+emission_shape = 1
+emission_sphere_radius = 0.2
+direction = Vector3(0, 1, 0)
+spread = 15.0
+gravity = Vector3(0, 1.5, 0)
+initial_velocity_min = 0.4
+initial_velocity_max = 1.0
+scale_amount_curve = SubResource("scale_curve")
+color_ramp = SubResource("fire_gradient")
+
+[node name="Light" type="OmniLight3D" parent="."]
+position = Vector3(0, 1.5, 0)
+light_color = Color(1, 0.62, 0.3, 1)
+light_energy = 3.0
+shadow_enabled = true
+shadow_blur = 1.5
+omni_range = 9.0
+omni_attenuation = 1.2
